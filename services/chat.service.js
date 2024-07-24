@@ -1,5 +1,4 @@
 const userController = require('../DL/controllers/user.controller')
-//const messageController = require('../DL/controllers/message.controller')
 const chatController = require('../DL/controllers/chat.controller')
 const { Flags } = require('../utility');
 const chatModel = require('../DL/models/chat.model');
@@ -29,7 +28,6 @@ async function getUnReadMess(userId, flag) {
         }
     })
 
-    console.log(data)
     return data
 }
 async function getChats(userId, flag) {
@@ -91,8 +89,6 @@ async function createMessage(userId, data) {
         lastDate: "2024-03-21T10:24:00.000Z"
     }
     let createChat = await chatController.create(chat);
-    console.log(createChat)
-    console.log(createChat)
     data.members.forEach((id) => {
         let user = userController.update({ _id: id }, {
             $push: {
@@ -113,7 +109,6 @@ async function createMessage(userId, data) {
 
 async function search(userId, search) {
     let getUser = await userController.readOne({ _id: userId }, { chats: true, users: true });
-    console.log(search)
     let chats = getUser.chats.filter((value) => (
         value.chat.subject.includes(search) ||
         value.chat.members.some(s => s.fullName.includes(search)) ||
