@@ -64,7 +64,8 @@ router.put('/:chatId', async (req, res) => {
 
 router.post('/createMessage', async (req, res) => {
     try {
-        let result = await chatService.createMessage(req.body.user._id)
+        console.log(req.body)
+        let result = await chatService.createMessage(req.body.user._id, req.body)
         res.send(result)
     }
     catch (err) {

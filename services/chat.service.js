@@ -79,30 +79,36 @@ async function addMessage(userId, data) {
 
 async function createMessage(userId, data) {
     console.log("createMessage")
+    let chat = {
+        subject: data.subject,
+        members: data.members,
+        msg: [{
+            from: userId,
 
-    let chat = await chatController.create(data);
-    let chatId = chat._id
+            content: data.msg,
 
-    console.log(chatId)
-    for (let user of chat.members) {
-        let getUser = await userController.readOne({ _id: user }, { chats: true, users: true });
-        for (let idChat of getUser.chats) {
-            if (!idChat.chat.equals(chatId)) {
-                let newChat = await userController.update({ _id: user }, {
-                    $push: {
-                        chats: {
-                            chat: chatId,
-                            isRecieved: true,
-                            isRead: false,
-                            labels: []
-                        }
-                    }
-                });
-            }
-        }
-
+        }],
+        lastDate: "2024-03-21T10:24:00.000Z"
     }
-    return chat;
+    let createChat = await chatController.create(chat);
+    console.log(createChat)
+    console.log(createChat)
+    data.members.forEach((id) => {
+        let user = userController.update({ _id: id }, {
+            $push: {
+                chats: {
+                    chat: createChat._id,
+                    isSent: true,
+                    isRecieved: true,
+                    isRead: false,
+                    labels: []
+                }
+            }
+        }, { new: true });
+
+    })
+
+
 }
 
 async function search(userId, search) {
@@ -113,10 +119,6 @@ async function search(userId, search) {
         value.chat.members.some(s => s.fullName.includes(search)) ||
         value.chat.msg.some(s => s.content.includes(search))
     ))
-    // value.forEach(async (chat) => {
-    //     let find = await chatController.readOne(_id = chat._id);
-    //     console.log(find + "11")
-    // })
 
     return chats
 }
