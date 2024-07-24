@@ -4,7 +4,6 @@ async function getUser(userId) {
     console.log("getChats")
     let ret = "fullName email avatar _id"
     let user = await userController.readOne({ _id: userId }, { chats: false, users: false }, ret);
-    console.log(user)
     return user;
 }
 
@@ -19,7 +18,6 @@ async function login(loginData) {
     const email = loginData.email;
     console.log(password + " " + email);
     const user = await userController.readOne({ email: email }, "+password");
-    console.log("🚀 ~ file: userLogic.js ~ line 8 ~ login ~ user", user);
     if (!user) throw { code: 404, message: "User does not exist" };
     if (user.password !== password)
         throw { code: 401, message: " Username or password incorrect" };
